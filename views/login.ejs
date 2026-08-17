@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <%- include('partials/header', { section: section }) %>
+  <main>
+    <section class="form-card">
+      <h2>Login</h2>
+      <% if (errors && errors.length) { %>
+        <div class="error-box">
+          <ul>
+            <% errors.forEach((error) => { %>
+              <li><%= error %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+      <form method="POST" action="/login" novalidate>
+        <label>
+          Email or username
+          <input type="text" name="login" value="<%= (form && form.login) ? form.login : '' %>" required />
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" required />
+        </label>
+        <button type="submit" class="primary-button">Log in</button>
+      </form>
+      <p>Don't have an account? <a href="/signup">Sign up</a></p>
+    </section>
+  </main>
+</body>
+</html>

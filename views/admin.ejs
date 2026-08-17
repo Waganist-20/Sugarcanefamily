@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <%- include('partials/header', { section: section }) %>
+
+  <main>
+    <section style="max-width:1100px;margin:1.5rem auto;">
+      <h1>Admin Dashboard</h1>
+      <p>Overview of users and listings.</p>
+
+      <div class="hero" style="grid-template-columns: repeat(3, 1fr); gap:1rem; margin-top:1rem;">
+        <div class="hero-card">
+          <h3>Total users</h3>
+          <p><strong><%= stats.totalUsers %></strong></p>
+        </div>
+        <div class="hero-card">
+          <h3>Total listings</h3>
+          <p><strong><%= stats.totalListings %></strong></p>
+        </div>
+        <div class="hero-card">
+          <h3>Lease / Sale people</h3>
+          <p><strong><%= stats.totalLeasePeople %></strong> lease &nbsp; / &nbsp; <strong><%= stats.totalSalePeople %></strong> sale</p>
+        </div>
+      </div>
+
+      <section style="margin-top:1.25rem;">
+        <h2>Users</h2>
+        <div class="card-grid">
+          <% if (users.length === 0) { %>
+            <div class="card">No users registered.</div>
+          <% } %>
+          <% users.forEach(function(u){ %>
+            <div class="card">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <img src="<%= u.profilePhoto || '/images/profile-avatar.svg' %>" alt="<%= u.username %>" style="width:48px;height:48px;border-radius:999px;object-fit:cover;border:2px solid #dbeafe;" />
+                <div>
+                  <strong><%= u.name %></strong>
+                  <div style="font-size:0.9rem;color:#64748b;">@<%= u.username %> · <%= u.email %></div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+
+      <section style="margin-top:1.25rem;">
+        <h2>People leasing land</h2>
+        <div class="card-grid">
+          <% if (leasePeople.length === 0) { %>
+            <div class="card">No lease people found.</div>
+          <% } %>
+          <% leasePeople.forEach(function(p){ %>
+            <div class="card">
+              <strong><%= p.name %></strong>
+              <div style="color:#64748b"><%= p.email %> · <%= p.phone || 'No phone' %></div>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+
+      <section style="margin-top:1.25rem;">
+        <h2>People selling land</h2>
+        <div class="card-grid">
+          <% if (salePeople.length === 0) { %>
+            <div class="card">No sale people found.</div>
+          <% } %>
+          <% salePeople.forEach(function(p){ %>
+            <div class="card">
+              <strong><%= p.name %></strong>
+              <div style="color:#64748b"><%= p.email %> · <%= p.phone || 'No phone' %></div>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

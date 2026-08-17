@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sugarcane Land Marketplace</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <%- include('partials/header', { section: section }) %>
+
+  <main>
+    <section class="slideshow">
+      <div class="slides">
+        <% slideshowImages.forEach((item, index) => { %>
+          <div class="slide <%= index === 0 ? 'active' : '' %>">
+            <img src="<%= item.src %>" alt="<%= item.title %>" />
+            <div class="slide-overlay">
+              <div>
+                <h2><%= item.title %></h2>
+                <p><%= item.desc %></p>
+              </div>
+              <span class="slide-counter">Slide <%= index + 1 %> of <%= slideshowImages.length %></span>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+      <div class="slide-controls">
+        <button id="prevSlide" aria-label="Previous slide">&#10094;</button>
+        <button id="nextSlide" aria-label="Next slide">&#10095;</button>
+      </div>
+    </section>
+
+    <section class="hero">
+      <div>
+        <h1>Buy, lease, or post sugarcane land listings</h1>
+        <p>Showcase available lands with standing sugarcane, manage leasing details, and connect with buyers or renters.</p>
+      </div>
+      <div class="hero-card">
+        <h2>Fast listing cards</h2>
+        <p>All posts appear as cards below so interested parties can review land details quickly.</p>
+      </div>
+    </section>
+
+    <section class="active-profile-banner">
+      <div class="profile-summary-card">
+        <img src="<%= profile.profilePhoto %>" alt="<%= profile.name %> profile photo" />
+        <div>
+          <h3><%= profile.name %> <span class="username">@<%= profile.username %></span></h3>
+          <p><%= profile.phone %> · <%= profile.email %></p>
+          <p><%= profile.bio %></p>
+        </div>
+        <a class="secondary-button" href="/profile">View profile</a>
+      </div>
+    </section>
+
+    <section class="filter-bar">
+      <form method="GET" action="/">
+        <label>Filter:
+          <select name="type" onchange="this.form.submit()">
+            <option value="all" <%= filterType === 'all' ? 'selected' : '' %>>All</option>
+            <option value="sale" <%= filterType === 'sale' ? 'selected' : '' %>>Sale</option>
+            <option value="lease" <%= filterType === 'lease' ? 'selected' : '' %>>Lease</option>
+          </select>
+        </label>
+        <label>Sort:
+          <select name="sort" onchange="this.form.submit()">
+            <option value="newest" <%= sortBy === 'newest' ? 'selected' : '' %>>Newest</option>
+            <option value="priceAsc" <%= sortBy === 'priceAsc' ? 'selected' : '' %>>Price low to high</option>
+            <option value="priceDesc" <%= sortBy === 'priceDesc' ? 'selected' : '' %>>Price high to low</option>
+          </select>
+        </label>
+      </form>
+    </section>
+
+    <section class="card-grid">
+      <% if (listings.length === 0) { %>
+        <div class="card empty-card">
+          <p>No listings available yet. Add one from the Post Land page.</p>
+        </div>
+      <% } %>
+
+      <% listings.forEach((item) => { %>
+        <article class="card" data-type="<%= item.type %>">
+          <div class="card-image-wrap">
+            <img class="listing-image" src="<%= item.farmImage %>" alt="Farm photo for <%= item.title %>" />
+            <div class="badge"><%= item.type.toUpperCase() %></div>
+          </div>
+          <div class="card-content">
+            <h3><%= item.title %></h3>
+            <div class="meta">
+              <span><%= item.location %></span>
+              <span><%= item.size %> acres</span>
+              <span><%= item.sugarcaneStatus %></span>
+            </div>
+            <p><%= item.description %></p>
+            <div class="farm-details">
+              <div>
+                <span>Location</span>
+                <strong><%= item.location %></strong>
+              </div>
+              <div>
+                <span>Price</span>
+                <strong><%= formatCurrency(item.price) %>/acre</strong>
+              </div>
+              <div>
+                <span>Size</span>
+                <strong><%= item.size %> acres</strong>
+              </div>
+              <div>
+                <span>Status</span>
+                <strong><%= item.sugarcaneStatus %></strong>
+              </div>
+            </div>
+            <div class="footer">
+              <div class="owner-pill">
+                <img src="<%= item.ownerPhoto %>" alt="<%= item.ownerUsername %> profile" />
+                <div>
+                  <strong><%= item.ownerName %></strong>
+                  <span class="owner-username">@<%= item.ownerUsername %></span>
+                </div>
+              </div>
+              <span><%= formatCurrency(item.price) %> / acre</span>
+            </div>
+          </div>
+        </article>
+      <% }) %>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+  <script defer src="/script.js"></script>
+</body>
+</html>

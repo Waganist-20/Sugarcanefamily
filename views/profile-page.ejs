@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <%- include('partials/header', { section: section }) %>
+  <main>
+    <section class="profile-card">
+      <div class="profile-identity">
+        <img class="profile-avatar" src="<%= profile.profilePhoto %>" alt="<%= profile.name %> profile photo" />
+        <div>
+          <h3><%= profile.name %> <span class="username">@<%= profile.username %></span></h3>
+          <p><%= profile.email %></p>
+          <p><%= profile.phone %></p>
+          <p class="profile-caption"><%= profile.bio %></p>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div>
+          <strong><%= stats.total %></strong>
+          <span>Listings</span>
+        </div>
+        <div>
+          <strong><%= stats.sale %></strong>
+          <span>For sale</span>
+        </div>
+        <div>
+          <strong><%= stats.lease %></strong>
+          <span>For lease</span>
+        </div>
+      </div>
+    </section>
+    <div class="profile-actions">
+      <form method="POST" action="/profile/reset">
+        <button type="submit" class="secondary-button">Clear all listings</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

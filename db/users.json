@@ -1,0 +1,27 @@
+[
+  {
+    "name": "mayabi",
+    "username": "mayabi20",
+    "emainpm l": "wisemayabi@gmail.com",
+    "phone": "0717654030",
+    "password": "9d15860c713d300a479ba33c355b37fe$7dc38eaa930ba92952a3db35b1b9f30dff8394064c5c95a4f93e9c2f5d0112b7f9842976e5c7d1c46712ac9496402577ef3de2bfd558e959c0e30345a54cec56",
+    "profilePhoto": "/images/profile-avatar.svg"
+  },
+  {
+    "name": "Administrator",
+    "username": "admin",
+    "email": "admin@localhost",
+    "phone": "",
+    "password": "d8351d8e4b4f250fdeb2e5c596133627$a8325bde7e498b55bf7669cf82655d3a3ee4f456e91cf98bcd570f5c2a5c629f6a3c89958070ae94c50d402a653822a5fdd46024a3cdbe762ab0dcad2a326d35",
+    "profilePhoto": "/images/profile-avatar.svg",
+    "isAdmin":true
+  },
+  {
+    "name": "mayabi",
+    "username": "mayabi30",
+    "email": "mayabibanns2@gmail.com",
+    "phone": "0717654030",
+    "password": "3569d34ab9b95ebe2661d30ae25e60e8$09fb8960f5f2ed0d56a98a3e4a145effae8fd35c04e957e1d23de91d39d4a5ceb23fa0775c5525b750dd27225ad2c753131c6873084d3b44625b2cf921439183",
+    "profilePhoto": "/images/profile-avatar.svg"
+  }
+]

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <%- include('partials/header', { section: section }) %>
+
+  <main>
+    <section class="profile-card">
+      <div class="profile-identity">
+        <img class="profile-avatar" src="<%= profile.profilePhoto || '/images/profile-avatar.svg' %>" alt="<%= profile.name %> profile photo" />
+        <div>
+          <h3><%= profile.name %> <span class="username">@<%= profile.username %></span></h3>
+          <p><%= profile.email %></p>
+          <p><%= profile.phone %></p>
+          <p class="profile-caption"><%= profile.bio %></p>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div>
+          <strong><%= stats.total %></strong>
+          <span>Listings</span>
+        </div>
+        <div>
+          <strong><%= stats.sale %></strong>
+          <span>For sale</span>
+        </div>
+        <div>
+          <strong><%= stats.lease %></strong>
+          <span>For lease</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card profile-edit-card">
+      <h2>Edit profile details</h2>
+      <form method="POST" action="/profile" id="profileForm">
+        <div class="grid-two">
+          <label>
+            Full name
+            <input type="text" name="name" value="<%= profile.name %>" required />
+          </label>
+          <label>
+            Username
+            <input type="text" name="username" value="<%= profile.username %>" required />
+          </label>
+        </div>
+
+        <div class="grid-two">
+          <label>
+            Email
+            <input type="email" name="email" value="<%= profile.email %>" required />
+          </label>
+          <label>
+            Phone number
+            <input type="tel" name="phone" value="<%= profile.phone %>" />
+          </label>
+        </div>
+
+        <label>
+          Profile photo
+          <div class="camera-capture-group">
+            <button type="button" id="profileCameraButton" class="secondary-button">Open camera</button>
+            <input type="file" name="profilePhoto" accept="image/*" capture="user" id="profilePhotoFile" />
+            <input type="hidden" name="profilePhotoBase64" id="profilePhotoBase64" />
+            <div class="camera-preview" id="profilePhotoPreviewWrap">
+              <video id="profileCameraPreview" autoplay muted playsinline hidden></video>
+              <canvas id="profileCameraCanvas" hidden></canvas>
+              <img id="profileSnapshot" src="<%= profile.profilePhoto %>" alt="Profile photo preview" />
+            </div>
+          </div>
+        </label>
+
+        <label>
+          Bio
+          <textarea name="bio" rows="3"><%= profile.bio %></textarea>
+        </label>
+
+        <button type="submit" class="primary-button">Save profile</button>
+      </form>
+    </section>
+
+    <div class="profile-actions">
+      <form method="POST" action="/profile/reset">
+        <button type="submit" class="secondary-button">Clear all listings</button>
+      </form>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('profileForm');
+      const cameraButton = document.getElementById('profileCameraButton');
+      const profilePhotoFile = document.getElementById('profilePhotoFile');
+      const profilePhotoBase64 = document.getElementById('profilePhotoBase64');
+      const video = document.getElementById('profileCameraPreview');
+      const canvas = document.getElementById('profileCameraCanvas');
+      const snapshot = document.getElementById('profileSnapshot');
+      let stream = null;
+
+      const toBase64 = (file) => new Promise((resolve, reject) => {
+        if (!file) {
+          resolve('');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const stopStream = () => {
+        if (stream) {
+          stream.getTracks().forEach((track) => track.stop());
+          stream = null;
+        }
+        video.hidden = true;
+      };
+
+      const captureImage = () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        snapshot.src = dataUrl;
+        snapshot.hidden = false;
+        profilePhotoBase64.value = dataUrl;
+        stopStream();
+      };
+
+      cameraButton.addEventListener('click', async () => {
+        if (stream) {
+          captureImage();
+          cameraButton.textContent = 'Open camera';
+          return;
+        }
+
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+          video.srcObject = stream;
+          video.hidden = false;
+          cameraButton.textContent = 'Capture photo';
+        } catch (error) {
+          alert('Unable to open camera. Use the file selector instead.');
+        }
+      });
+
+      profilePhotoFile.addEventListener('change', () => {
+        profilePhotoBase64.value = '';
+      });
+
+      form.addEventListener('submit', async (event) => {
+        if (!profilePhotoBase64.value && profilePhotoFile.files.length > 0) {
+          profilePhotoBase64.value = await toBase64(profilePhotoFile.files[0]);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

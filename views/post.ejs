@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post Land Listing</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <%- include('partials/header', { section: section }) %>
+
+  <main>
+    <section class="form-card">
+      <h2>Post a Land Listing</h2>
+      <form method="POST" action="/post" enctype="multipart/form-data">
+        <div class="grid-two">
+          <label>
+            Your name
+            <input type="text" name="ownerName" placeholder="John Doe" required />
+          </label>
+          <label>
+            Username
+            <input type="text" name="ownerUsername" placeholder="johnfarm" required />
+          </label>
+        </div>
+
+        <div class="grid-two">
+          <label>
+            Contact email
+            <input type="email" name="ownerEmail" placeholder="name@example.com" required />
+          </label>
+          <label>
+            Phone number
+            <input type="tel" name="ownerPhone" placeholder="+1234567890" />
+          </label>
+        </div>
+
+        <div class="grid-two">
+          <label>
+            Listing title
+            <input type="text" name="title" placeholder="Standing sugarcane plot" required />
+          </label>
+          <label>
+            Location
+            <input type="text" name="location" placeholder="County / Region" required />
+          </label>
+        </div>
+
+        <div class="grid-two">
+          <label>
+            Type
+            <select name="type" required>
+              <option value="sale">Sale</option>
+              <option value="lease">Lease</option>
+            </select>
+          </label>
+          <label>
+            Size (acres)
+            <input type="number" name="size" min="0" step="0.1" placeholder="10" required />
+          </label>
+        </div>
+
+        <div class="grid-two">
+          <label>
+            Price (ksh per acre)
+            <input type="number" name="price" min="0" step="0.01" placeholder="500" required />
+          </label>
+           <label>
+            number of acres
+            <input type="number" name="number" min="0" step ="0.01" placeholder="total acres"/>
+          </label>
+          <label>
+            Standing sugarcane age
+            <input type="text" name="sugarcaneStatus" placeholder="6 months / mature" required />
+          </label>
+        </div>
+
+        <div class="grid-two">
+          <label>
+            Farm photo
+            <input type="file" name="listingImage" accept="image/*" capture="environment" />
+          </label>
+          <label>
+            Profile photo
+            <div class="camera-capture-group">
+              <button type="button" id="startCameraButton" class="secondary-button">Open camera</button>
+              <input type="file" name="profilePhoto" accept="image/*" capture="user" id="profilePhotoFile" />
+              <input type="hidden" name="profilePhotoBase64" id="profilePhotoBase64" />
+              <div class="camera-preview" id="profilePhotoPreviewWrap">
+                <video id="profileCameraPreview" autoplay muted playsinline></video>
+                <canvas id="profileCameraCanvas" hidden></canvas>
+                <img id="profileSnapshot" alt="Profile photo preview" />
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <label>
+          Description
+          <textarea name="description" rows="4" placeholder="Add property details, irrigation, rental terms, or machinery included." required></textarea>
+        </label>
+
+        <button type="submit" class="primary-button">Publish Listing</button>
+      </form>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.querySelector('form');
+      const listingInput = form.querySelector('input[name="listingImage"]');
+      const profileInput = form.querySelector('input[name="profilePhoto"]');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const toBase64 = (file) => new Promise((resolve, reject) => {
+          if (!file || !file.name) {
+            resolve('');
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        const listingImageBase64 = await toBase64(listingInput.files[0]);
+        let profilePhotoBase64 = document.getElementById('profilePhotoBase64').value;
+
+        if (!profilePhotoBase64) {
+          profilePhotoBase64 = await toBase64(profileInput.files[0]);
+        }
+
+        const formData = new FormData(form);
+        formData.set('listingImageBase64', listingImageBase64);
+        formData.set('profilePhotoBase64', profilePhotoBase64);
+
+        const payload = Object.fromEntries(formData.entries());
+
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (response.ok) {
+          window.location.href = '/';
+        } else {
+          alert('Unable to publish listing. Please try again.');
+        }
+      });
+
+      const startCameraButton = document.getElementById('startCameraButton');
+      const profileCameraPreview = document.getElementById('profileCameraPreview');
+      const profileCameraCanvas = document.getElementById('profileCameraCanvas');
+      const profileSnapshot = document.getElementById('profileSnapshot');
+      const profilePhotoBase64Input = document.getElementById('profilePhotoBase64');
+      const profilePhotoFile = document.getElementById('profilePhotoFile');
+      let cameraStream = null;
+
+      const stopCamera = () => {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach((track) => track.stop());
+          cameraStream = null;
+        }
+        profileCameraPreview.hidden = true;
+      };
+
+      const captureProfilePhoto = async () => {
+        profileCameraCanvas.width = profileCameraPreview.videoWidth;
+        profileCameraCanvas.height = profileCameraPreview.videoHeight;
+        const ctx = profileCameraCanvas.getContext('2d');
+        ctx.drawImage(profileCameraPreview, 0, 0);
+        const dataUrl = profileCameraCanvas.toDataURL('image/jpeg', 0.85);
+        profileSnapshot.src = dataUrl;
+        profileSnapshot.hidden = false;
+        profilePhotoBase64Input.value = dataUrl;
+        stopCamera();
+      };
+
+      startCameraButton.addEventListener('click', async () => {
+        if (cameraStream) {
+          captureProfilePhoto();
+          return;
+        }
+
+        try {
+          cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+          profileCameraPreview.srcObject = cameraStream;
+          profileCameraPreview.hidden = false;
+          startCameraButton.textContent = 'Capture photo';
+        } catch (error) {
+          alert('Unable to open camera. Please allow camera access or use the file picker.');
+        }
+      });
+
+      profilePhotoFile.addEventListener('change', () => {
+        profilePhotoBase64Input.value = '';
+        profileSnapshot.hidden = true;
+      });
+    });
+  </script>
+</body>
+</html>

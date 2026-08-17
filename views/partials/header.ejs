@@ -1,0 +1,20 @@
+<header class="topbar">
+  <a class="brand" href="/">
+    <img src="/images/WhatsApp Image 2026-08-13 at 2.02.24 PM (1).jpeg" alt="Sugarcane Logo" class="mato">
+    <span class="brand-text">Sugarcane Land Market</span>
+  </a>
+  <nav>
+    <a class="nav-button <%= section === 'home' ? 'active' : '' %>" href="/">Home</a>
+    <a class="nav-button <%= section === 'post' ? 'active' : '' %>" href="/post">Post Land</a>
+    <% if (currentUser) { %>
+      <a class="nav-button <%= section === 'profile' ? 'active' : '' %>" href="/profile">Profile</a>
+      <% if (currentUser.isAdmin) { %>
+        <a class="nav-button <%= section === 'admin' ? 'active' : '' %>" href="/admin">Admin</a>
+      <% } %>
+      <a class="nav-button" href="/logout">Logout</a>
+    <% } else { %>
+      <a class="nav-button <%= section === 'login' ? 'active' : '' %>" href="/login">Login</a>
+      <a class="nav-button <%= section === 'signup' ? 'active' : '' %>" href="/signup">Sign Up</a>
+    <% } %>
+  </nav>
+</header>

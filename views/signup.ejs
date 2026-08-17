@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <%- include('partials/header', { section: section }) %>
+  <main>
+    <section class="form-card">
+      <h2>Create an account</h2>
+      <% if (errors && errors.length) { %>
+        <div class="error-box">
+          <ul>
+            <% errors.forEach((error) => { %>
+              <li><%= error %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+      <form method="POST" action="/signup" novalidate>
+        <div class="grid-two">
+          <label>
+            Full name
+            <input type="text" name="name" value="<%= (form && form.name) ? form.name : '' %>" required />
+          </label>
+          <label>
+            Username
+            <input type="text" name="username" value="<%= (form && form.username) ? form.username : '' %>" required />
+          </label>
+        </div>
+        <div class="grid-two">
+          <label>
+            Email
+            <input type="email" name="email" value="<%= (form && form.email) ? form.email : '' %>" required />
+          </label>
+          <label>
+            Phone number
+            <input type="tel" name="phone" value="<%= (form && form.phone) ? form.phone : '' %>" />
+          </label>
+        </div>
+        <div class="grid-two">
+          <label>
+            Password
+            <input type="password" name="password" required />
+          </label>
+          <label>
+            Confirm password
+            <input type="password" name="confirmPassword" required />
+          </label>
+        </div>
+        <button type="submit" class="primary-button">Sign up</button>
+      </form>
+      <p>Already have an account? <a href="/login">Log in</a></p>
+    </section>
+  </main>
+</body>
+</html>
