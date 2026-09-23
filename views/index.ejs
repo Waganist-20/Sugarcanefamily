@@ -6,7 +6,7 @@
   <title>Sugarcane Land Marketplace</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
-<body>
+<body class="page-home">
   <%- include('partials/header', { section: section }) %>
 
   <main>
@@ -32,14 +32,48 @@
     </section>
 
     <section class="hero">
-      <div>
+      <div class="hero-copy">
+        <span class="eyebrow">Fresh land opportunities</span>
         <h1>Buy, lease, or post sugarcane land listings</h1>
         <p>Showcase available lands with standing sugarcane, manage leasing details, and connect with buyers or renters.</p>
+        <div class="hero-actions">
+          <a class="primary-button" href="/post">Post a listing</a>
+          <a class="secondary-button" href="/signup">Create account</a>
+        </div>
       </div>
-      <div class="hero-card">
-        <h2>Fast listing cards</h2>
-        <p>All posts appear as cards below so interested parties can review land details quickly.</p>
-      </div>
+
+      <aside class="hero-panel">
+        <div>
+          <h3>Marketplace snapshot</h3>
+          <p>Everything from verified plots to flexible lease deals in one clean view.</p>
+        </div>
+        <div class="mini-stat">
+          <span>Active land</span>
+          <strong><%= listings.length %></strong>
+        </div>
+        <div class="mini-stat">
+          <span>Best price</span>
+          <strong><%= listings.length ? formatCurrency(Math.min(...listings.map(item => Number(item.price)))) : '—' %></strong>
+        </div>
+      </aside>
+    </section>
+
+    <section class="feature-grid">
+      <article class="feature-card">
+        <div class="icon">✓</div>
+        <h3>Verified listings</h3>
+        <p>Trusted entries with clear locations and field status for confident decisions.</p>
+      </article>
+      <article class="feature-card">
+        <div class="icon">◎</div>
+        <h3>Flexible terms</h3>
+        <p>Choose between sale and lease listings that match your farming goals.</p>
+      </article>
+      <article class="feature-card">
+        <div class="icon">★</div>
+        <h3>Local market</h3>
+        <p>Connect with land owners and buyers in a focused sugarcane marketplace.</p>
+      </article>
     </section>
 
     <section class="active-profile-banner">
